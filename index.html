@@ -50,15 +50,16 @@
   <!-- Firebase SDK -->
 
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
   <script>
+  import { initializeApp } from "firebase/app";
   // Your web app's Firebase configuration
   const firebaseConfig = {
     apiKey: "AIzaSyAogUzdoy8aiPCMsTyRCbHauiRyvfHy8dM",
     authDomain: "uncle-poems.firebaseapp.com",
     projectId: "uncle-poems",
-    storageBucket: "uncle-poems.firebasestorage.app",
+    storageBucket: "uncle-poems.appspot.com",
     messagingSenderId: "736476854304",
     appId: "1:736476854304:web:feb5cd6ea5bb96f8ea6445"
   };
