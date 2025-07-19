@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Uncle's Poems</title>
+  <style>
+    body {
+      display: grid;
+      grid-template-areas:
+        "top top top"
+        "left main right";
+      grid-template-columns: 200px 1fr 200px;
+      grid-template-rows: 60px 1fr;
+      height: 100vh;
+      margin: 0;
+    }
+    header {
+      grid-area: top;
+      background: #333;
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 0 1rem;
+    }
+    nav.left, nav.right, main {
+      padding: 1rem;
+    }
+    nav.left { grid-area: left; background: #eee; }
+    nav.right { grid-area: right; background: #eee; }
+    main { grid-area: main; }
+  </style>
+</head>
+<body>
+  <header><h1>Daily Poem</h1></header>
+  <nav class="left">Left Nav</nav>
+  <main>
+    <h2>Welcome</h2>
+    <p>This is a sample poem.</p>
+  </main>
+  <nav class="right">Right Nav</nav>
+</body>
+</html>
