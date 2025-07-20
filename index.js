@@ -12,7 +12,7 @@ import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/
     appId: "1:736476854304:web:feb5cd6ea5bb96f8ea6445"
   };
  // Initialize Firebase
-  const app = firebase.initializeApp(firebaseConfig);
+  firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
   async function submitPoem() {
