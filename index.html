@@ -4,33 +4,7 @@
   <meta charset="UTF-8">
   <title>My Uncle's Poems</title>
   <script type="module" src="index.js"></script>
-  <style>
-    body {
-      display: grid;
-      grid-template-areas:
-        "top top top"
-        "left main right";
-      grid-template-columns: 200px 1fr 200px;
-      grid-template-rows: 60px 1fr;
-      height: 100vh;
-      margin: 0;
-    }
-    header {
-      grid-area: top;
-      background: #333;
-      color: white;
-      display: flex;
-      align-items: center;
-      padding: 0 1rem;
-    }
-    nav.left, nav.right, main {
-      padding: 1rem;
-    }
-    nav.left { grid-area: left; background: #eee; }
-    nav.right { grid-area: right; background: #eee; }
-    main { grid-area: main; }
-    textarea { width: 100%; height: 100px; }
-  </style>
+  <link rel="stylesheet" href="my.css">
 </head>
 <body>
   <header><h1>Daily Poem</h1></header>
