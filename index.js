@@ -15,8 +15,8 @@ const firebaseConfig = {
 };
 
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
 // async function submitPoem() {
 //   const text = document.getElementById('poemInput').value.trim();
