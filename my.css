@@ -1,15 +1,31 @@
 body {
   display: grid;
   grid-template-areas:
-    "top top top"
-    "left main right";
-  grid-template-columns: 200px 1fr 200px;
-  grid-template-rows: 60px 1fr;
-  height: 100vh;
+    "top"
+    "left"
+    "main";
+  grid-template-columns: 1fr;
+  grid-template-rows: auto;
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #f9f9f9;
   color: #222;
+}
+
+/* Desktop layout */
+@media (min-width: 768px) {
+  body {
+    grid-template-areas:
+      "top top top"
+      "left main right";
+    grid-template-columns: 200px 1fr 200px;
+    grid-template-rows: 60px 1fr;
+    height: 100vh;
+  }
+
+  nav.left, nav.right {
+    display: block;
+  }
 }
 
 header {
@@ -21,6 +37,7 @@ header {
   padding: 0 1.5rem;
   box-shadow: 0 2px 5px rgba(0,0,0,0.3);
   font-weight: 600;
+  height: 60px;
 }
 
 nav.left, nav.right {
@@ -45,7 +62,7 @@ main {
 }
 
 h2 {
-  margin-top: 0;
+  margin-top: 1.5rem;
   color: #333;
   border-bottom: 2px solid #666;
   padding-bottom: 0.3rem;
@@ -64,6 +81,16 @@ h3 {
   border-bottom: 1px solid #ddd;
   line-height: 1.4;
   white-space: pre-wrap;
+  background: #fdfdfd;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  border-left: 4px solid #444;
+  transition: box-shadow 0.2s ease;
+}
+
+.poem-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .poem-card strong {
@@ -100,6 +127,7 @@ button {
   border-radius: 3px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-top: 0.5rem;
 }
 
 button:hover {
@@ -113,22 +141,12 @@ button:hover {
   margin-top: 1rem;
 }
 
-.poem-card {
-  background: #fdfdfd;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  transition: box-shadow 0.2s ease;
-  border-left: 4px solid #444;
-}
-
-.poem-card:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
-.poem-card strong {
-  font-size: 0.85rem;
-  color: #666;
-  margin-bottom: 0.5rem;
-  display: block;
+#paginationControls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+  font-size: 1rem;
 }
