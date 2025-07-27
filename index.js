@@ -23,22 +23,31 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 function formatDate(timestamp) {
+  if (!timestamp) return 'Unknown time';
   const date = timestamp.toDate();
   return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
 }
 
 export async function submitPoem() {
   const text = document.getElementById('poemInput').value.trim();
-  if (!text) return alert('Please enter a poem');
+  if (!text) {
+    alert('Please enter a poem');
+    return;
+  }
 
-  await addDoc(collection(db, 'poems'), {
-    content: text,
-    timestamp: serverTimestamp()
-  });
+  try {
+    await addDoc(collection(db, 'poems'), {
+      content: text,
+      timestamp: serverTimestamp()
+    });
 
-  document.getElementById('poemInput').value = '';
-  loadLatestPoem();
-  loadAllPoems();
+    document.getElementById('poemInput').value = '';
+    await loadLatestPoem();
+    await loadAllPoems();
+  } catch (error) {
+    alert('Error submitting poem. Please try again.');
+    console.error(error);
+  }
 }
 
 async function loadLatestPoem() {
@@ -49,10 +58,8 @@ async function loadLatestPoem() {
   if (!snapshot.empty) {
     const doc = snapshot.docs[0];
     const data = doc.data();
-    const poem = data.content;
-    const time = data.timestamp ? formatDate(data.timestamp) : 'Unknown time';
-
-    display.innerHTML = `<strong>${time}</strong><br>${poem}`;
+    const time = formatDate(data.timestamp);
+    display.innerHTML = `<strong>${time}</strong><br>${escapeHtml(data.content)}`;
   } else {
     display.innerText = "No poems yet.";
   }
@@ -66,12 +73,23 @@ async function loadAllPoems() {
 
   snapshot.forEach(doc => {
     const data = doc.data();
-    const time = data.timestamp ? formatDate(data.timestamp) : "Unknown";
-    const poemHtml = `<div class="poem-card"><strong>${time}</strong><br>${data.content}</div><hr>`;
+    const time = formatDate(data.timestamp);
+    const poemHtml = `
+      <div class="poem-card">
+        <strong>${time}</strong>
+        ${escapeHtml(data.content)}
+      </div>`;
     listEl.innerHTML += poemHtml;
   });
 }
 
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 loadLatestPoem();
 loadAllPoems();
+
 window.submitPoem = submitPoem;
