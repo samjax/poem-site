@@ -106,8 +106,29 @@ button:hover {
   background-color: #555;
 }
 
-hr {
-  border: none;
-  border-top: 1px solid #ddd;
-  margin: 1rem 0;
+.poem-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-top: 1rem;
+}
+
+.poem-card {
+  background: #fdfdfd;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  transition: box-shadow 0.2s ease;
+  border-left: 4px solid #444;
+}
+
+.poem-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.poem-card strong {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+  display: block;
 }
