@@ -30,6 +30,8 @@ let currentDocs = [];
 let firstVisible = null;
 let lastVisible = null;
 let currentPage = 1;
+let hasNextPage = true;
+let hasPrevPage = false;
 
 function formatDate(timestamp) {
   if (!timestamp) return 'Unknown time';
@@ -96,7 +98,9 @@ async function loadPoemsPage(direction = "initial") {
 
     if (snapshot.empty) {
       listEl.innerHTML = "<p>No poems to show.</p>";
-      document.getElementById("pageIndicator").innerText = "Page 0";
+      document.getElementById("pageIndicator").innerText = `Page ${currentPage}`;
+      document.getElementById("prevPage").disabled = true;
+      document.getElementById("nextPage").disabled = true;
       return;
     }
 
@@ -117,7 +121,7 @@ async function loadPoemsPage(direction = "initial") {
 
     document.getElementById("pageIndicator").innerText = `Page ${currentPage}`;
 
-    // Disable buttons appropriately
+    // Re-check next/prev page availability
     document.getElementById("prevPage").disabled = currentPage === 1;
     document.getElementById("nextPage").disabled = snapshot.size < pageSize;
 
@@ -138,6 +142,5 @@ loadPoemsPage("initial");
 
 window.submitPoem = submitPoem;
 
-// Hook buttons
 document.getElementById("nextPage").addEventListener("click", () => loadPoemsPage("next"));
 document.getElementById("prevPage").addEventListener("click", () => loadPoemsPage("prev"));
