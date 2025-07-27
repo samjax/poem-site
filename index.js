@@ -30,7 +30,7 @@ let currentPage = 1;
 function formatDate(timestamp) {
   if (!timestamp) return 'Unknown time';
   const date = timestamp.toDate();
-  return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+  return `${date.toLocaleDateString()}`;
 }
 
 export async function submitPoem() {
