@@ -8,19 +8,27 @@
 <body>
   <header><h1>Daily Poem</h1></header>
   <nav class="left">Left Nav</nav>
+  
   <main>
     <h2>Latest Poem</h2>
     <div id="poemDisplay">Loading...</div>
 
     <hr>
 
-    <h3>Submit New Poem</h3>
-    <textarea id="poemInput" placeholder="Write your poem here..."></textarea>
-    <br><br>
-    <button onclick="submitPoem()">Submit Poem</button>
+    <h2>All Poems</h2>
+    <div id="poemList"></div>
+
+    <hr>
+
+    <section id="submitPoemSection">
+      <h3>Submit New Poem</h3>
+      <textarea id="poemInput" placeholder="Write your poem here..."></textarea>
+      <br><br>
+      <button onclick="submitPoem()">Submit Poem</button>
+    </section>
   </main>
+
   <nav class="right">Right Nav</nav>
   <script type="module" src="index.js"></script>
 </body>
 </html>
-

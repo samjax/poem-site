@@ -1,25 +1,32 @@
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-  import { getFirestore,collection,addDoc,serverTimestamp,getDocs,query,orderBy,limit } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp,
+  getDocs,
+  query,
+  orderBy,
+  limit
+} from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+const firebaseConfig = {
+  apiKey: "AIzaSyBfE7ISuxwPlKeiweLc5btE7Tlgnw2f9ts",
+  authDomain: "my-web-projects-abacf.firebaseapp.com",
+  projectId: "my-web-projects-abacf",
+  storageBucket: "my-web-projects-abacf.firebasestorage.app",
+  messagingSenderId: "683801418693",
+  appId: "1:683801418693:web:0b297d0db74f91578c49ac"
+};
 
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyBfE7ISuxwPlKeiweLc5btE7Tlgnw2f9ts",
-    authDomain: "my-web-projects-abacf.firebaseapp.com",
-    projectId: "my-web-projects-abacf",
-    storageBucket: "my-web-projects-abacf.firebasestorage.app",
-    messagingSenderId: "683801418693",
-    appId: "1:683801418693:web:0b297d0db74f91578c49ac"
-  };
-
-  // Initialize Firebase
 const app = initializeApp(firebaseConfig);
- const db = getFirestore(app);
+const db = getFirestore(app);
 
-// Submit a new poem
+function formatDate(timestamp) {
+  const date = timestamp.toDate();
+  return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+}
+
 export async function submitPoem() {
   const text = document.getElementById('poemInput').value.trim();
   if (!text) return alert('Please enter a poem');
@@ -31,22 +38,40 @@ export async function submitPoem() {
 
   document.getElementById('poemInput').value = '';
   loadLatestPoem();
+  loadAllPoems();
 }
 
-// Load the latest poem
 async function loadLatestPoem() {
   const q = query(collection(db, "poems"), orderBy("timestamp", "desc"), limit(1));
   const snapshot = await getDocs(q);
+  const display = document.getElementById("poemDisplay");
+
   if (!snapshot.empty) {
-    const poem = snapshot.docs[0].data().content;
-    document.getElementById("poemDisplay").innerText = poem;
+    const doc = snapshot.docs[0];
+    const data = doc.data();
+    const poem = data.content;
+    const time = data.timestamp ? formatDate(data.timestamp) : 'Unknown time';
+
+    display.innerHTML = `<strong>${time}</strong><br>${poem}`;
   } else {
-    document.getElementById("poemDisplay").innerText = "No poems yet.";
+    display.innerText = "No poems yet.";
   }
 }
 
-// Run on load
-loadLatestPoem();
+async function loadAllPoems() {
+  const q = query(collection(db, "poems"), orderBy("timestamp", "desc"));
+  const snapshot = await getDocs(q);
+  const listEl = document.getElementById("poemList");
+  listEl.innerHTML = "";
 
-// Expose submitPoem globally
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    const time = data.timestamp ? formatDate(data.timestamp) : "Unknown";
+    const poemHtml = `<div class="poem-card"><strong>${time}</strong><br>${data.content}</div><hr>`;
+    listEl.innerHTML += poemHtml;
+  });
+}
+
+loadLatestPoem();
+loadAllPoems();
 window.submitPoem = submitPoem;
