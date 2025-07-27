@@ -25,6 +25,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+const pageSize = 4;
+let currentDocs = [];
+let firstVisible = null;
+let lastVisible = null;
+let currentPage = 1;
+
 function formatDate(timestamp) {
   if (!timestamp) return 'Unknown time';
   const date = timestamp.toDate();
@@ -68,21 +74,19 @@ async function loadLatestPoem() {
   }
 }
 
-// 🔄 Global pagination state
-let firstVisible = null;
-let lastVisible = null;
-const pageSize = 4;
-
 async function loadPoemsPage(direction = "initial") {
   const poemsRef = collection(db, "poems");
   let q;
 
   if (direction === "next" && lastVisible) {
     q = query(poemsRef, orderBy("timestamp", "desc"), startAfter(lastVisible), limit(pageSize));
+    currentPage++;
   } else if (direction === "prev" && firstVisible) {
     q = query(poemsRef, orderBy("timestamp", "desc"), endBefore(firstVisible), limitToLast(pageSize));
+    currentPage = Math.max(1, currentPage - 1);
   } else {
     q = query(poemsRef, orderBy("timestamp", "desc"), limit(pageSize));
+    currentPage = 1;
   }
 
   try {
@@ -92,11 +96,11 @@ async function loadPoemsPage(direction = "initial") {
 
     if (snapshot.empty) {
       listEl.innerHTML = "<p>No poems to show.</p>";
-      document.getElementById("nextPage").disabled = true;
-      document.getElementById("prevPage").disabled = true;
+      document.getElementById("pageIndicator").innerText = "Page 0";
       return;
     }
 
+    currentDocs = snapshot.docs;
     firstVisible = snapshot.docs[0];
     lastVisible = snapshot.docs[snapshot.docs.length - 1];
 
@@ -105,14 +109,16 @@ async function loadPoemsPage(direction = "initial") {
       const time = formatDate(data.timestamp);
       const poemHtml = `
         <div class="poem-card">
-          <strong>${time}</strong>
+          <strong>${time}</strong><br>
           ${escapeHtml(data.content)}
         </div>`;
       listEl.innerHTML += poemHtml;
     });
 
-    // Enable/disable buttons
-    document.getElementById("prevPage").disabled = direction === "initial";
+    document.getElementById("pageIndicator").innerText = `Page ${currentPage}`;
+
+    // Disable buttons appropriately
+    document.getElementById("prevPage").disabled = currentPage === 1;
     document.getElementById("nextPage").disabled = snapshot.size < pageSize;
 
   } catch (err) {
@@ -127,12 +133,11 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-// ⏳ Initial load
 loadLatestPoem();
 loadPoemsPage("initial");
 
 window.submitPoem = submitPoem;
-window.loadPoemsPage = loadPoemsPage;
 
+// Hook buttons
 document.getElementById("nextPage").addEventListener("click", () => loadPoemsPage("next"));
 document.getElementById("prevPage").addEventListener("click", () => loadPoemsPage("prev"));
