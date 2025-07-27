@@ -70,7 +70,7 @@ let currentDocs = [];
 let firstVisible = null;
 let lastVisible = null;
 const pageSize = 4;
-
+}
 async function loadPoemsPage(direction = "initial") {
   const poemsRef = collection(db, "poems");
   let q;
@@ -121,7 +121,7 @@ async function loadPoemsPage(direction = "initial") {
 }
 
 
-}
+
 
 function escapeHtml(text) {
   const div = document.createElement('div');
