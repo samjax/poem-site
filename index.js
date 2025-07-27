@@ -4,70 +4,76 @@ import {
   getDocs, query, orderBy, limit, startAfter, endBefore, limitToLast
 } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 import {
-  getAuth, signInWithPopup, GoogleAuthProvider,
-  onAuthStateChanged, signOut
+  getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut
 } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
 
-const firebaseConfig = { /* your config */ };
+const firebaseConfig = {
+  apiKey: "AIzaSyBfE7ISuxwPlKeiweLc5btE7Tlgnw2f9ts",
+  authDomain: "my-web-projects-abacf.firebaseapp.com",
+  projectId: "my-web-projects-abacf",
+  storageBucket: "my-web-projects-abacf.appspot.com",
+  messagingSenderId: "683801418693",
+  appId: "1:683801418693:web:0b297d0db74f91578c49ac"
+};
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
-const poemsRef = collection(db, "poems");
+const provider = new GoogleAuthProvider();
 
 const pageSize = 4;
-let firstVisible = null, lastVisible = null, currentPage = 1;
+let currentDocs = [];
+let firstVisible = null;
+let lastVisible = null;
+let currentPage = 1;
 
-const ownerEmail = "owner@example.com"; // set the owner's email here
+function formatDate(timestamp) {
+  if (!timestamp) return 'Unknown time';
+  const date = timestamp.toDate();
+  return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+}
 
-// UI elements
-const loginBtn = document.getElementById("loginBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-const submitSection = document.getElementById("submitPoemSection");
-
-loginBtn.addEventListener("click", () => {
-  signInWithPopup(auth, new GoogleAuthProvider()).catch(console.error);
-});
-logoutBtn.addEventListener("click", () => {
-  signOut(auth);
-});
-
-onAuthStateChanged(auth, user => {
-  if (user && user.email === ownerEmail) {
-    submitSection.style.display = "block";
-    loginBtn.style.display = "none";
-    logoutBtn.style.display = "inline-block";
-  } else {
-    submitSection.style.display = "none";
-    loginBtn.style.display = user ? "none" : "inline-block";
-    logoutBtn.style.display = user ? "inline-block" : "none";
+export async function submitPoem() {
+  const text = document.getElementById('poemInput').value.trim();
+  if (!text) {
+    alert('Please enter a poem');
+    return;
   }
-});
 
-// prevent unauthorized submitting
-document.getElementById("submitBtn").addEventListener("click", async () => {
-  const text = document.getElementById("poemInput").value.trim();
-  if (!text) return alert("Empty poem");
-  await addDoc(poemsRef, { content: text, timestamp: serverTimestamp() });
-  document.getElementById("poemInput").value = "";
-  loadLatestPoem();
-  loadPoemsPage("initial");
-});
+  try {
+    await addDoc(collection(db, 'poems'), {
+      content: text,
+      timestamp: serverTimestamp()
+    });
 
-// load latest
+    document.getElementById('poemInput').value = '';
+    await loadLatestPoem();
+    await loadPoemsPage("initial");
+  } catch (error) {
+    alert('You are not authorized to submit poems.');
+    console.error(error);
+  }
+}
+
 async function loadLatestPoem() {
-  const snap = await getDocs(query(poemsRef, orderBy("timestamp", "desc"), limit(1)));
+  const q = query(collection(db, "poems"), orderBy("timestamp", "desc"), limit(1));
+  const snapshot = await getDocs(q);
   const display = document.getElementById("poemDisplay");
-  if (!snap.empty) {
-    const data = snap.docs[0].data();
-    display.innerHTML = `<strong>${data.timestamp.toDate().toLocaleString()}</strong><br>${escapeHtml(data.content)}`;
+
+  if (!snapshot.empty) {
+    const doc = snapshot.docs[0];
+    const data = doc.data();
+    const time = formatDate(data.timestamp);
+    display.innerHTML = `<strong>${time}</strong><br>${escapeHtml(data.content)}`;
   } else {
     display.innerText = "No poems yet.";
   }
 }
 
-// pagination loader
 async function loadPoemsPage(direction = "initial") {
+  const poemsRef = collection(db, "poems");
   let q;
+
   if (direction === "next" && lastVisible) {
     q = query(poemsRef, orderBy("timestamp", "desc"), startAfter(lastVisible), limit(pageSize));
     currentPage++;
@@ -78,36 +84,84 @@ async function loadPoemsPage(direction = "initial") {
     q = query(poemsRef, orderBy("timestamp", "desc"), limit(pageSize));
     currentPage = 1;
   }
-  const snap = await getDocs(q);
-  const listEl = document.getElementById("poemList");
-  listEl.innerHTML = "";
-  if (snap.empty) {
-    listEl.innerHTML = "<p>No poems to show.</p>";
-  } else {
-    firstVisible = snap.docs[0];
-    lastVisible = snap.docs[snap.docs.length - 1];
-    snap.forEach(doc => {
-      const d = doc.data();
-      listEl.innerHTML += `<div class="poem-card"><strong>${formatDate(d.timestamp)}</strong><br>${escapeHtml(d.content)}</div>`;
+
+  try {
+    const snapshot = await getDocs(q);
+    const listEl = document.getElementById("poemList");
+    listEl.innerHTML = "";
+
+    if (snapshot.empty) {
+      listEl.innerHTML = "<p>No poems to show.</p>";
+      return;
+    }
+
+    currentDocs = snapshot.docs;
+    firstVisible = snapshot.docs[0];
+    lastVisible = snapshot.docs[snapshot.docs.length - 1];
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const time = formatDate(data.timestamp);
+      const poemHtml = `
+        <div class="poem-card">
+          <strong>${time}</strong><br>
+          ${escapeHtml(data.content)}
+        </div>`;
+      listEl.innerHTML += poemHtml;
     });
+
+    document.getElementById("pageNumber").innerText = `Page ${currentPage}`;
+    document.getElementById("prevPage").disabled = currentPage === 1;
+    document.getElementById("nextPage").disabled = snapshot.size < pageSize;
+
+  } catch (err) {
+    console.error("Error loading poems:", err);
+    alert("Failed to load poems.");
   }
-  document.getElementById("pageIndicator").innerText = `Page ${currentPage}`;
-  document.getElementById("prevPage").disabled = currentPage === 1;
-  document.getElementById("nextPage").disabled = snap.size < pageSize;
 }
 
-function formatDate(ts) {
-  return ts ? ts.toDate().toLocaleString() : "Unknown";
-}
 function escapeHtml(text) {
-  const d = document.createElement("div");
-  d.textContent = text;
-  return d.innerHTML;
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
+
+function showSubmitSection(show) {
+  document.getElementById("submitPoemSection").style.display = show ? "block" : "none";
+}
+
+function updateAuthUI(user) {
+  const loginBtn = document.getElementById("loginBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (user) {
+    loginBtn.style.display = "none";
+    logoutBtn.style.display = "inline";
+    showSubmitSection(true);
+  } else {
+    loginBtn.style.display = "inline";
+    logoutBtn.style.display = "none";
+    showSubmitSection(false);
+  }
+}
+
+document.getElementById("loginBtn").addEventListener("click", () => {
+  signInWithPopup(auth, provider).catch(err => {
+    console.error("Login failed", err);
+    alert("Login failed");
+  });
+});
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  signOut(auth);
+});
+
+onAuthStateChanged(auth, user => {
+  updateAuthUI(user);
+});
 
 loadLatestPoem();
 loadPoemsPage("initial");
-window.submitPoem = () => {}; // unused now
+window.submitPoem = submitPoem;
 
 document.getElementById("nextPage").addEventListener("click", () => loadPoemsPage("next"));
 document.getElementById("prevPage").addEventListener("click", () => loadPoemsPage("prev"));
