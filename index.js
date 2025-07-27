@@ -66,9 +66,9 @@ async function loadLatestPoem() {
 }
 
 async function loadAllPoems() {
-let currentPageDocs = [];
-let lastVisible = null;
+let currentDocs = [];
 let firstVisible = null;
+let lastVisible = null;
 const pageSize = 4;
 
 async function loadPoemsPage(direction = "initial") {
@@ -83,35 +83,43 @@ async function loadPoemsPage(direction = "initial") {
     q = query(poemsRef, orderBy("timestamp", "desc"), limit(pageSize));
   }
 
-  const snapshot = await getDocs(q);
-  const listEl = document.getElementById("poemList");
-  listEl.innerHTML = "";
+  try {
+    const snapshot = await getDocs(q);
+    const listEl = document.getElementById("poemList");
+    listEl.innerHTML = "";
 
-  if (snapshot.empty) {
-    listEl.innerHTML = "<p>No more poems.</p>";
-    document.getElementById("nextPage").disabled = true;
-    return;
+    if (snapshot.empty) {
+      listEl.innerHTML = "<p>No poems to show.</p>";
+      document.getElementById("nextPage").disabled = true;
+      document.getElementById("prevPage").disabled = true;
+      return;
+    }
+
+    currentDocs = snapshot.docs;
+    firstVisible = snapshot.docs[0];
+    lastVisible = snapshot.docs[snapshot.docs.length - 1];
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const time = formatDate(data.timestamp);
+      const poemHtml = `
+        <div class="poem-card">
+          <strong>${time}</strong>
+          ${escapeHtml(data.content)}
+        </div>`;
+      listEl.innerHTML += poemHtml;
+    });
+
+    // Enable/disable buttons based on snapshot size
+    document.getElementById("prevPage").disabled = direction === "initial" || snapshot.size < pageSize;
+    document.getElementById("nextPage").disabled = snapshot.size < pageSize;
+
+  } catch (err) {
+    console.error("Error loading poems:", err);
+    alert("Failed to load poems. Please try again.");
   }
-
-  currentPageDocs = snapshot.docs;
-  firstVisible = snapshot.docs[0];
-  lastVisible = snapshot.docs[snapshot.docs.length - 1];
-
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    const time = formatDate(data.timestamp);
-    const poemHtml = `
-      <div class="poem-card">
-        <strong>${time}</strong>
-        ${escapeHtml(data.content)}
-      </div>`;
-    listEl.innerHTML += poemHtml;
-  });
-
-  // Enable/disable buttons
-  document.getElementById("prevPage").disabled = direction === "initial" || snapshot.size < pageSize;
-  document.getElementById("nextPage").disabled = snapshot.size < pageSize;
 }
+
 
 }
 
@@ -129,5 +137,7 @@ window.submitPoem = submitPoem;
 document.getElementById("nextPage").addEventListener("click", () => loadPoemsPage("next"));
 document.getElementById("prevPage").addEventListener("click", () => loadPoemsPage("prev"));
 
-loadPoemsPage(); // Initial load
+// Initial load
+loadPoemsPage("initial");
+
 
