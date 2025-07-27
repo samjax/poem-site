@@ -66,10 +66,36 @@ async function loadLatestPoem() {
 }
 
 async function loadAllPoems() {
-  const q = query(collection(db, "poems"), orderBy("timestamp", "desc"));
+let currentPageDocs = [];
+let lastVisible = null;
+let firstVisible = null;
+const pageSize = 4;
+
+async function loadPoemsPage(direction = "initial") {
+  const poemsRef = collection(db, "poems");
+  let q;
+
+  if (direction === "next" && lastVisible) {
+    q = query(poemsRef, orderBy("timestamp", "desc"), startAfter(lastVisible), limit(pageSize));
+  } else if (direction === "prev" && firstVisible) {
+    q = query(poemsRef, orderBy("timestamp", "desc"), endBefore(firstVisible), limitToLast(pageSize));
+  } else {
+    q = query(poemsRef, orderBy("timestamp", "desc"), limit(pageSize));
+  }
+
   const snapshot = await getDocs(q);
   const listEl = document.getElementById("poemList");
   listEl.innerHTML = "";
+
+  if (snapshot.empty) {
+    listEl.innerHTML = "<p>No more poems.</p>";
+    document.getElementById("nextPage").disabled = true;
+    return;
+  }
+
+  currentPageDocs = snapshot.docs;
+  firstVisible = snapshot.docs[0];
+  lastVisible = snapshot.docs[snapshot.docs.length - 1];
 
   snapshot.forEach(doc => {
     const data = doc.data();
@@ -79,9 +105,14 @@ async function loadAllPoems() {
         <strong>${time}</strong>
         ${escapeHtml(data.content)}
       </div>`;
-
     listEl.innerHTML += poemHtml;
   });
+
+  // Enable/disable buttons
+  document.getElementById("prevPage").disabled = direction === "initial" || snapshot.size < pageSize;
+  document.getElementById("nextPage").disabled = snapshot.size < pageSize;
+}
+
 }
 
 function escapeHtml(text) {
@@ -94,3 +125,9 @@ loadLatestPoem();
 loadAllPoems();
 
 window.submitPoem = submitPoem;
+
+document.getElementById("nextPage").addEventListener("click", () => loadPoemsPage("next"));
+document.getElementById("prevPage").addEventListener("click", () => loadPoemsPage("prev"));
+
+loadPoemsPage(); // Initial load
+
