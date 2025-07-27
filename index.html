@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>என் கவிதைகள்</title>
-  <link rel="stylesheet" href="my.css" />
+  <link rel="stylesheet" href="my.css"/>
+  <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js"></script>
 </head>
 <body>
   <header><h1>என் கவிதைகள்</h1></header>
-
-  <nav class="left">Left Nav</nav>
-
+  <nav class="left">Nav</nav>
   <main>
     <h2>இன்றைய கவிதை</h2>
     <div id="poemDisplay" class="poem-card">Loading...</div>
@@ -18,18 +19,21 @@
     <h2>All Poems</h2>
     <div id="poemList" class="poem-list"></div>
 
-    <div id="paginationControls" style="margin-top: 1rem;">
+    <div id="paginationControls">
       <button id="prevPage" disabled>Previous</button>
       <span id="pageIndicator">Page 1</span>
       <button id="nextPage" disabled>Next</button>
     </div>
 
+    <section id="authSection">
+      <button id="loginBtn">Login as Owner</button>
+      <button id="logoutBtn" style="display:none;">Logout</button>
+    </section>
 
-    <section id="submitPoemSection">
+    <section id="submitPoemSection" style="display:none;">
       <h3>Submit New Poem</h3>
       <textarea id="poemInput" placeholder="Write your poem here..."></textarea>
-      <br />
-      <button onclick="submitPoem()">Submit Poem</button>
+      <button id="submitBtn">Submit Poem</button>
     </section>
   </main>
 
