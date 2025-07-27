@@ -110,7 +110,7 @@ async function loadPoemsPage(direction = "initial") {
       listEl.innerHTML += poemHtml;
     });
 
-    document.getElementById("pageNumber").innerText = `Page ${currentPage}`;
+    document.getElementById("pageNumber").innerText = `${currentPage}`;
     document.getElementById("prevPage").disabled = currentPage === 1;
     document.getElementById("nextPage").disabled = snapshot.size < pageSize;
 
