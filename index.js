@@ -7,7 +7,10 @@ import {
   getDocs,
   query,
   orderBy,
-  limit
+  limit,
+  startAfter,
+  endBefore,
+  limitToLast
 } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -43,7 +46,7 @@ export async function submitPoem() {
 
     document.getElementById('poemInput').value = '';
     await loadLatestPoem();
-    await loadAllPoems();
+    await loadPoemsPage("initial");
   } catch (error) {
     alert('Error submitting poem. Please try again.');
     console.error(error);
@@ -65,12 +68,11 @@ async function loadLatestPoem() {
   }
 }
 
-async function loadAllPoems() {
-let currentDocs = [];
+// 🔄 Global pagination state
 let firstVisible = null;
 let lastVisible = null;
 const pageSize = 4;
-}
+
 async function loadPoemsPage(direction = "initial") {
   const poemsRef = collection(db, "poems");
   let q;
@@ -95,7 +97,6 @@ async function loadPoemsPage(direction = "initial") {
       return;
     }
 
-    currentDocs = snapshot.docs;
     firstVisible = snapshot.docs[0];
     lastVisible = snapshot.docs[snapshot.docs.length - 1];
 
@@ -110,8 +111,8 @@ async function loadPoemsPage(direction = "initial") {
       listEl.innerHTML += poemHtml;
     });
 
-    // Enable/disable buttons based on snapshot size
-    document.getElementById("prevPage").disabled = direction === "initial" || snapshot.size < pageSize;
+    // Enable/disable buttons
+    document.getElementById("prevPage").disabled = direction === "initial";
     document.getElementById("nextPage").disabled = snapshot.size < pageSize;
 
   } catch (err) {
@@ -120,24 +121,18 @@ async function loadPoemsPage(direction = "initial") {
   }
 }
 
-
-
-
 function escapeHtml(text) {
   const div = document.createElement('div');
   div.textContent = text;
   return div.innerHTML;
 }
 
+// ⏳ Initial load
 loadLatestPoem();
-loadAllPoems();
+loadPoemsPage("initial");
 
 window.submitPoem = submitPoem;
+window.loadPoemsPage = loadPoemsPage;
 
 document.getElementById("nextPage").addEventListener("click", () => loadPoemsPage("next"));
 document.getElementById("prevPage").addEventListener("click", () => loadPoemsPage("prev"));
-
-// Initial load
-loadPoemsPage("initial");
-
-
