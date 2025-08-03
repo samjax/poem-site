@@ -157,10 +157,6 @@ document.getElementById("emailLoginSubmit").addEventListener("click", async () =
 });
 
 
-onAuthStateChanged(auth, user => {
-  updateAuthUI(user);
-});
-
 loadLatestPoem();
 loadPoemsPage("initial");
 window.submitPoem = submitPoem;
