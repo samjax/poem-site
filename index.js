@@ -156,9 +156,6 @@ document.getElementById("emailLoginSubmit").addEventListener("click", async () =
   }
 });
 
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  signOut(auth);
-});
 
 onAuthStateChanged(auth, user => {
   updateAuthUI(user);
