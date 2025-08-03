@@ -143,10 +143,6 @@ function updateAuthUI(user) {
   }
 }
 
-document.getElementById("loginBtn").addEventListener("click", () => {
-  document.getElementById("emailLoginForm").style.display = "block";
-});
-
 document.getElementById("emailLoginSubmit").addEventListener("click", async () => {
   const email = document.getElementById("emailInput").value;
   const password = document.getElementById("passwordInput").value;
