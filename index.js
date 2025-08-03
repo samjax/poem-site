@@ -132,6 +132,8 @@ function showSubmitSection(show) {
 function updateAuthUI(user) {
   const loginBtn = document.getElementById("loginBtn");
   const logoutBtn = document.getElementById("logoutBtn");
+  if (!loginBtn || !logoutBtn) return;
+
   if (user) {
     loginBtn.style.display = "none";
     logoutBtn.style.display = "inline";
@@ -142,6 +144,14 @@ function updateAuthUI(user) {
     showSubmitSection(false);
   }
 }
+
+document.getElementById("loginBtn").addEventListener("click", () => {
+  document.getElementById("emailLoginForm").style.display = "block";
+});
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  signOut(auth);
+});
 
 document.getElementById("emailLoginSubmit").addEventListener("click", async () => {
   const email = document.getElementById("emailInput").value;
@@ -156,6 +166,9 @@ document.getElementById("emailLoginSubmit").addEventListener("click", async () =
   }
 });
 
+onAuthStateChanged(auth, user => {
+  updateAuthUI(user);
+});
 
 loadLatestPoem();
 loadPoemsPage("initial");

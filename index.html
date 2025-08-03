@@ -11,6 +11,17 @@
     <h1>என் கவிதைகள்</h1>
   </header>
 
+  <div class="top-buttons">
+    <button id="loginBtn">Login</button>
+    <button id="logoutBtn" style="display: none;">Logout</button>
+  </div>
+
+  <div id="emailLoginForm" style="display: none;">
+    <input type="email" id="emailInput" placeholder="Email" />
+    <input type="password" id="passwordInput" placeholder="Password" />
+    <button id="emailLoginSubmit">Login</button>
+  </div>
+
   <main>
     <section>
       <h2>இன்றைய கவிதை</h2>
@@ -27,7 +38,7 @@
       </div>
     </section>
 
-    <section id="submitPoemSection" style="display:none;">
+    <section id="submitPoemSection" style="display: none;">
       <h2>Submit New Poem</h2>
       <textarea id="poemInput" placeholder="Write your poem here..."></textarea>
       <button onclick="submitPoem()">Submit Poem</button>
@@ -37,12 +48,6 @@
   <footer>
     <p>&copy; 2025 என் கவிதைகள்</p>
   </footer>
-
-  <div id="emailLoginForm" style="display: none;">
-    <input type="email" id="emailInput" placeholder="Email" />
-    <input type="password" id="passwordInput" placeholder="Password" />
-    <button id="emailLoginSubmit">Login</button>
-  </div>
 
   <script type="module" src="index.js"></script>
 </body>
