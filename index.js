@@ -144,16 +144,16 @@ function updateAuthUI(user) {
   }
 }
 
-// document.getElementById("loginBtn").addEventListener("click", () => {
-//   signInWithPopup(auth, provider).catch(err => {
-//     console.error("Login failed", err);
-//     alert("Login failed");
-//   });
-// });
+document.getElementById("loginBtn").addEventListener("click", () => {
+  signInWithPopup(auth, provider).catch(err => {
+    console.error("Login failed", err);
+    alert("Login failed");
+  });
+});
 
-// document.getElementById("logoutBtn").addEventListener("click", () => {
-//   signOut(auth);
-// });
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  signOut(auth);
+});
 
 onAuthStateChanged(auth, user => {
   updateAuthUI(user);
