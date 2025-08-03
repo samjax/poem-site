@@ -4,7 +4,7 @@ import {
   getDocs, query, orderBy, limit, startAfter, endBefore, limitToLast
 } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 import {
-  getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut
+  getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
 } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -19,7 +19,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
 
 const pageSize = 4;
 let currentDocs = [];
@@ -145,10 +144,20 @@ function updateAuthUI(user) {
 }
 
 document.getElementById("loginBtn").addEventListener("click", () => {
-  signInWithPopup(auth, provider).catch(err => {
-    console.error("Login failed", err);
-    alert("Login failed");
-  });
+  document.getElementById("emailLoginForm").style.display = "block";
+});
+
+document.getElementById("emailLoginSubmit").addEventListener("click", async () => {
+  const email = document.getElementById("emailInput").value;
+  const password = document.getElementById("passwordInput").value;
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    document.getElementById("emailLoginForm").style.display = "none";
+  } catch (err) {
+    alert("Login failed: " + err.message);
+    console.error(err);
+  }
 });
 
 document.getElementById("logoutBtn").addEventListener("click", () => {

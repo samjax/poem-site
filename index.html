@@ -12,8 +12,6 @@
   </header>
 
   <main>
-
-
     <section>
       <h2>இன்றைய கவிதை</h2>
       <div id="poemDisplay" class="poem-card">Loading...</div>
@@ -39,10 +37,17 @@
   <footer>
     <p>&copy; 2025 என் கவிதைகள்</p>
   </footer>
-    <div class="top-buttons">
-      <button id="loginBtn">Login as Owner</button>
-      <button id="logoutBtn" style="display:none;">Logout</button>
-    </div>
+
+  <div class="top-buttons">
+    <button id="loginBtn">Login as Owner</button>
+    <button id="logoutBtn" style="display:none;">Logout</button>
+  </div>
+
+  <div id="emailLoginForm" style="display: none;">
+    <input type="email" id="emailInput" placeholder="Email" />
+    <input type="password" id="passwordInput" placeholder="Password" />
+    <button id="emailLoginSubmit">Login</button>
+  </div>
 
   <script type="module" src="index.js"></script>
 </body>
