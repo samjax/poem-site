@@ -1,61 +1,61 @@
-<!DOCTYPE html>
-<html lang="ta">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>யுவராஜ் சம்பத்</title>
-  <link rel="stylesheet" href="my.css" />
-</head>
-<body>
-  <div class="hero">
-    <!-- Top Title -->
-    <h1 class="hero-title">யுவராஜ் சம்பத்</h1>
+  <!DOCTYPE html>
+  <html lang="ta">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>யுவராஜ் சம்பத்</title>
+    <link rel="stylesheet" href="my.css" />
+  </head>
+  <body>
+    <div class="hero">
+      <!-- Top Title -->
+      <h1 class="hero-title">யுவராஜ் சம்பத்</h1>
 
-    <!-- Content Card -->
-    <main class="content-card">
-      <div id="emailLoginForm" style="display: none;">
-        <input type="email" id="emailInput" placeholder="Email" />
-        <input type="password" id="passwordInput" placeholder="Password" />
-        <button id="emailLoginSubmit">Login</button>
-      </div>
-
-      <section>
-        <h2>இன்றைய கவிதை</h2>
-        <div id="poemDisplay" class="poem-card">Loading...</div>
-      </section>
-
-      <section>
-        <h2>All Poems</h2>
-        <div id="poemList" class="poem-list"></div>
-        <div id="paginationControls">
-          <button id="prevPage" disabled>Previous</button>
-          <span id="pageNumber">1</span>
-          <button id="nextPage" disabled>Next</button>
+      <!-- Content Card -->
+      <main class="content-card">
+        <div id="emailLoginForm" style="display: none;">
+          <input type="email" id="emailInput" placeholder="Email" />
+          <input type="password" id="passwordInput" placeholder="Password" />
+          <button id="emailLoginSubmit">Login</button>
         </div>
-      </section>
 
-      <section id="submitPoemSection" style="display: none;">
-        <h2>Submit New Poem</h2>
-        <textarea id="poemInput" placeholder="Write your poem here..."></textarea>
-        <button onclick="submitPoem()">Submit Poem</button>
-      </section>
+        <section>
+          <h2>இன்றைய கவிதை</h2>
+          <div id="poemDisplay" class="poem-card">Loading...</div>
+        </section>
 
-      <div class="top-buttons">
-        <button id="loginBtn">Login</button>
-        <button id="logoutBtn" style="display: none;">Logout</button>
-      </div>
-    </main>
+        <section>
+          <h2>All Poems</h2>
+          <div id="poemList" class="poem-list"></div>
+          <div id="paginationControls">
+            <button id="prevPage" disabled>Previous</button>
+            <span id="pageNumber">1</span>
+            <button id="nextPage" disabled>Next</button>
+          </div>
+        </section>
 
-    <!-- Bottom Nav -->
-    <nav class="hero-nav">
-      <a href="#">குறிச்சிட்டு</a>
-      <a href="#">துவானை</a>
-      <a href="#">முழு சிட்டு</a>
-      <a href="#">அன்பம்</a>
-      <a href="#">சிறு மயில்</a>
-    </nav>
-  </div>
+        <section id="submitPoemSection" style="display: none;">
+          <h2>Submit New Poem</h2>
+          <textarea id="poemInput" placeholder="Write your poem here..."></textarea>
+          <button onclick="submitPoem()">Submit</button>
+        </section>
 
-  <script type="module" src="index.js"></script>
-</body>
-</html>
+        <div class="top-buttons">
+          <button id="loginBtn">Login</button>
+          <button id="logoutBtn" style="display: none;">Logout</button>
+        </div>
+      </main>
+
+      <!-- Bottom Nav -->
+      <nav class="hero-nav">
+        <a href="#">குறிச்சிட்டு</a>
+        <a href="#">துவானை</a>
+        <a href="#">முழு சிட்டு</a>
+        <a href="#">அன்பம்</a>
+        <a href="#">சிறு மயில்</a>
+      </nav>
+    </div>
+
+    <script type="module" src="index.js"></script>
+  </body>
+  </html>
